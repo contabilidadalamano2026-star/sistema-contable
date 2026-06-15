@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from db.database import get_db
 from models import models
 from api.businesses import get_current_user
-from api.dependencies import get_business_with_roles
+from api.dependencies import get_business_with_roles, require_accountant
 from pydantic import BaseModel
 from typing import Optional
 
@@ -19,7 +19,7 @@ class BankAccountResponse(BankAccountCreate):
     class Config:
         from_attributes = True
 
-router = APIRouter(prefix="/api/businesses/{business_id}/bank_accounts", tags=["bank_accounts"])
+router = APIRouter(prefix="/api/businesses/{business_id}/bank_accounts", tags=["bank_accounts"], dependencies=[Depends(require_accountant)])
 
 @router.get("", response_model=list[BankAccountResponse])
 def get_bank_accounts(business_id: int, db: Session = Depends(get_db), user_id: str = Depends(get_current_user)):

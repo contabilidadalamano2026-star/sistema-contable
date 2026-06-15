@@ -22,3 +22,16 @@ def get_business_with_roles(business_id: int, db: Session, user_id: str):
         if not biz:
             raise HTTPException(status_code=404, detail="Negocio no encontrado")
         return biz
+
+def require_role(allowed_roles: list):
+    def role_checker(business_id: int, db: Session = Depends(get_db), user_id: str = Depends(get_current_user)):
+        biz = get_business_with_roles(business_id, db, user_id)
+        user = db.query(models.User).filter(models.User.id == user_id).first()
+        if user.role not in allowed_roles:
+            raise HTTPException(status_code=403, detail="Permisos insuficientes para esta acción")
+        return biz
+    return role_checker
+
+require_admin = require_role(["owner", "admin"])
+require_accountant = require_role(["owner", "admin", "accountant"])
+require_cashier = require_role(["owner", "admin", "cashier"])

@@ -45,5 +45,5 @@ def login(user: schemas.UserCreate, db: Session = Depends(get_db)):
     if not db_user or not verify_password(user.password, db_user.password_hash):
         raise HTTPException(status_code=401, detail="Credenciales inválidas")
     
-    token = create_access_token({"sub": db_user.id})
-    return {"access_token": token, "token_type": "bearer"}
+    token = create_access_token({"sub": db_user.id, "role": db_user.role})
+    return {"access_token": token, "token_type": "bearer", "role": db_user.role}

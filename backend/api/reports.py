@@ -5,9 +5,9 @@ from sqlalchemy import func
 from db.database import get_db
 from models import models
 from api.businesses import get_current_user
-from api.dependencies import get_business_with_roles
+from api.dependencies import get_business_with_roles, require_accountant
 
-router = APIRouter(prefix="/api/businesses/{business_id}/reports", tags=["reports"])
+router = APIRouter(prefix="/api/businesses/{business_id}/reports", tags=["reports"], dependencies=[Depends(require_accountant)])
 
 @router.get("/income-statement")
 def get_income_statement(business_id: int, db: Session = Depends(get_db), user_id: str = Depends(get_current_user)):

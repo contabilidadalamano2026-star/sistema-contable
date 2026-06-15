@@ -26,6 +26,7 @@ const Login = ({ setToken }) => {
             localStorage.setItem('token', data.access_token);
             // hardcode business 2 for testing
             localStorage.setItem('businessId', 2);
+            localStorage.setItem('role', data.role);
             setToken(data.access_token);
         } else {
             alert("Credenciales inválidas");
