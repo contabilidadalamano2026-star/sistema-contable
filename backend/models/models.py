@@ -115,3 +115,18 @@ class JournalLine(Base):
     
     transaction = relationship("Transaction")
     account = relationship("AccountCatalog")
+
+class Opportunity(Base):
+    __tablename__ = "opportunities"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    business_id = Column(Integer, ForeignKey("businesses.id"))
+    contact_id = Column(Integer, ForeignKey("contacts.id"))
+    title = Column(String, nullable=False)
+    description = Column(String)
+    amount = Column(Float, default=0.0)
+    status = Column(String, default="Lead") # Lead, Contactado, Propuesta, Ganado, Perdido
+    expected_close_date = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    
+    business = relationship("Business")
+    contact = relationship("Contact")

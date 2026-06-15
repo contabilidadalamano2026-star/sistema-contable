@@ -54,3 +54,21 @@ class BankAccountResponse(BankAccountCreate):
     current_balance: float
     class Config:
         from_attributes = True
+
+class OpportunityBase(BaseModel):
+    title: str
+    description: Optional[str] = None
+    amount: float = 0.0
+    status: str = "Lead"
+    contact_id: Optional[int] = None
+    expected_close_date: Optional[str] = None
+
+class OpportunityCreate(OpportunityBase):
+    pass
+
+class OpportunityResponse(OpportunityBase):
+    id: int
+    business_id: int
+    created_at: datetime
+    class Config:
+        from_attributes = True
