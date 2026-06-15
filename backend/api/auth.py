@@ -4,9 +4,9 @@ import jwt
 from datetime import datetime, timedelta
 import bcrypt
 
-from ..db.database import get_db
-from ..models import models
-from ..schemas import schemas
+from db.database import get_db
+from models import models
+from schemas import schemas
 
 router = APIRouter(prefix="/api", tags=["auth"])
 

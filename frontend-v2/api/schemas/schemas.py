@@ -1,0 +1,56 @@
+from pydantic import BaseModel
+from typing import Optional, List
+from datetime import datetime
+
+class UserBase(BaseModel):
+    id: str
+
+class UserCreate(UserBase):
+    password: str
+
+class UserResponse(UserBase):
+    class Config:
+        from_attributes = True
+
+class BusinessBase(BaseModel):
+    name: str
+    tax_id: Optional[str] = None
+    currency: str = "CRC"
+    industry: Optional[str] = None
+
+class BusinessCreate(BusinessBase):
+    pass
+
+class BusinessResponse(BusinessBase):
+    id: int
+    user_id: str
+    class Config:
+        from_attributes = True
+
+class TransactionCreate(BaseModel):
+    type: str
+    amount: float
+    category: str
+    description: str
+    account_id: Optional[int] = None
+    contact_id: Optional[int] = None
+    is_paid: bool = True
+    invoice_number: Optional[str] = None
+    exchange_rate: float = 1.0
+
+class TransactionResponse(TransactionCreate):
+    id: int
+    date: str
+    class Config:
+        from_attributes = True
+
+class BankAccountCreate(BaseModel):
+    name: str
+    currency: str = "CRC"
+    initial_balance: float = 0.0
+
+class BankAccountResponse(BankAccountCreate):
+    id: int
+    current_balance: float
+    class Config:
+        from_attributes = True

@@ -1,8 +1,8 @@
 from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
-from ..db.database import get_db
-from ..models import models
-from .auth import get_current_user
+from db.database import get_db
+from models import models
+from api.auth import get_current_user
 
 def get_business_with_roles(business_id: int, db: Session, user_id: str):
     user = db.query(models.User).filter(models.User.id == user_id).first()

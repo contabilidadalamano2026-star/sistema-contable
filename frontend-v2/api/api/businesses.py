@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, Header
 from sqlalchemy.orm import Session
 import jwt
 
-from ..db.database import get_db
-from ..models import models
-from ..schemas import schemas
+from db.database import get_db
+from models import models
+from schemas import schemas
 
 router = APIRouter(prefix="/api/businesses", tags=["businesses"])
 SECRET_KEY = "mysecretkey_v2" # move to env later
