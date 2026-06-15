@@ -1,0 +1,10 @@
+﻿venv/
+node_modules/
+__pycache__/
+*.db
+.env
+dist/
+mingit/
+mingit.zip
+mingit_py/
+deploy_render.py

@@ -1,0 +1,1243 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>C.A.L.M Integral</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzAwNzk2YiI+PHBhdGggZD0iTTEyIDJMMiAxMmgydjhoOHYtNmg0djZoOHYtOGgyTDEyIDJ6bS0yIDE2SDh2LThoNHY4em02IDBoLTR2LThoNHY4eiIvPjwvc3ZnPg==" type="image/svg+xml">
+    <meta name="theme-color" content="#00796b">
+</head>
+<body>
+    <div id="app-container">
+        
+        <!-- Barra de NavegaciÃ³n -->
+        <nav id="main-nav" style="display: none;">
+            <div>
+                <h2 id="app-title">Mi Casa</h2>
+            </div>
+            <div class="theme-switch-wrapper">
+                <span id="label-casa">Casa</span>
+                <label class="theme-switch" for="checkbox">
+                    <input type="checkbox" id="checkbox" />
+                    <div class="slider round"></div>
+                </label>
+                <span id="label-negocio">Negocio</span>
+                <button id="btn-logout" class="btn btn-outline" style="margin-left: 20px; padding: 8px 16px;">Salir</button>
+            </div>
+        </nav>
+
+        <!-- Vista: Login/Registro -->
+        <div id="view-auth" class="view active glass-card" style="max-width: 400px; margin: 100px auto;">
+            <h2 style="text-align: center; margin-bottom: 30px;">Bienvenido</h2>
+            
+            <form id="auth-form">
+                <div class="input-group">
+                    <label>Usuario</label>
+                    <input type="text" id="auth-username" required>
+                </div>
+                <div class="input-group" id="group-email" style="display: none;">
+                    <label>Correo ElectrÃ³nico</label>
+                    <input type="email" id="auth-email">
+                </div>
+                <div class="input-group">
+                    <label>ContraseÃ±a</label>
+                    <input type="password" id="auth-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Entrar</button>
+                <p style="text-align: center; margin-top: 15px;">
+                    <a href="#" id="toggle-auth-mode" style="color: var(--primary-color);">Â¿No tienes cuenta? RegÃ­strate</a>
+                </p>
+                <div id="auth-error" style="color: var(--danger-color); text-align: center; margin-top: 10px; display: none;">Error</div>
+            </form>
+        </div>
+
+        <!-- Vista: Dashboard Mi Casa -->
+        <div id="view-casa" class="view">
+            <div class="dashboard-grid">
+                <div class="glass-card stat-card">
+                    <h3>Ingresos Totales</h3>
+                    <div class="amount positive" id="casa-ingresos">â‚¡0</div>
+                </div>
+                <div class="glass-card stat-card">
+                    <h3>Gastos Totales</h3>
+                    <div class="amount negative" id="casa-gastos">â‚¡0</div>
+                </div>
+                <div class="glass-card stat-card">
+                    <h3>Disponible</h3>
+                    <div class="amount" id="casa-disponible">â‚¡0</div>
+                </div>
+            </div>
+
+            <div class="desktop-split">
+                <div class="split-left">
+                    <div class="glass-card" style="margin-bottom: 20px; background: rgba(0, 77, 64, 0.2);">
+                        <h2>AnÃ¡lisis de Salud Financiera e Inteligencia</h2>
+                        <div id="financial-health-container">
+                            <button id="btn-analyze-health" class="btn btn-primary" style="width: 100%;">Analizar Capacidad Crediticia</button>
+                            <div id="health-results" style="display: none; margin-top: 15px;">
+                                <h3 id="health-status-title" style="font-size: 1.5rem;">Estado: </h3>
+                                <p id="health-advice" style="font-weight: 500; font-size: 1.1rem; margin-top: 10px; line-height: 1.6;"></p>
+                                <ul style="list-style: none; margin-top: 15px; background: rgba(255,255,255,0.3); padding: 15px; border-radius: 8px;">
+                                    <li style="margin-bottom: 8px;"><strong>Margen de Endeudamiento:</strong> <span id="health-margin"></span>% (SUGEF recomienda max 40%)</li>
+                                    <li><strong>Dinero Sobrante (Ahorro/Abono extra):</strong> â‚¡<span id="health-available"></span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card" style="margin-bottom: 20px;">
+                        <h2>Registrar Movimiento</h2>
+                        <form id="form-transaccion-casa" style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
+                            <div class="input-group" style="flex: 1; min-width: 150px;">
+                                <label>Tipo</label>
+                                <select id="tc-type">
+                                    <option value="income">Ingreso</option>
+                                    <option value="expense">Gasto</option>
+                                </select>
+                            </div>
+                            <div class="input-group" style="flex: 1; min-width: 150px;">
+                                <label>Monto (â‚¡)</label>
+                                <input type="number" id="tc-amount" required>
+                            </div>
+                            <div class="input-group" style="flex: 2; min-width: 200px;">
+                                <label>CategorÃ­a (Ej: Salario, Comida)</label>
+                                <input type="text" id="tc-category" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="margin-bottom: 20px;">Guardar</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="split-right">
+                    <div class="glass-card">
+                        <h2>Ãšltimos Movimientos</h2>
+                        <ul id="list-transacciones-casa" class="transacciones-list">
+                            <!-- Se llena con JS -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vista: Dashboard Negocios -->
+        <div id="view-negocio" class="view">
+            <div class="glass-card" style="margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <h2 style="margin: 0;">Mis Negocios</h2>
+                    <select id="business-selector" class="input-group" style="margin-bottom: 0; min-width: 200px; flex:1;">
+                        <option value="">-- Selecciona un Negocio --</option>
+                    </select>
+                    <button id="btn-subusers" class="btn btn-outline" style="border-color:#ff9800; color:#ff9800; display:none;" onclick="openSubusersModal()">Sub-cuentas / Permisos</button>
+                    <button id="btn-nuevo-negocio" class="btn btn-outline">Crear Negocio</button>
+                </div>
+            </div>
+            
+            <div id="business-dashboard-content" style="display: none;">
+                <div class="dashboard-grid">
+                    <div class="glass-card stat-card">
+                        <h3>Ventas Netas</h3>
+                        <div class="amount positive" id="neg-ventas">â‚¡0</div>
+                    </div>
+                    <div class="glass-card stat-card">
+                        <h3>Costos/Gastos</h3>
+                        <div class="amount negative" id="neg-gastos">â‚¡0</div>
+                    </div>
+                    <div class="glass-card stat-card">
+                        <h3>Utilidad Bruta</h3>
+                        <div class="amount" id="neg-utilidad">â‚¡0</div>
+                    </div>
+                </div>
+
+                <div class="tab-menu" style="margin-top: 10px;">
+                    <button class="tab-btn active" id="tab-facturacion" onclick="switchNegocioTab('facturacion')">FacturaciÃ³n</button>
+                    <button class="tab-btn" id="tab-movimientos" onclick="switchNegocioTab('movimientos')">Historial y Movimientos</button>
+                    <button class="tab-btn" id="tab-hacienda" onclick="switchNegocioTab('hacienda')">ConfiguraciÃ³n Hacienda</button>
+                    <button class="tab-btn" id="tab-catalogo" onclick="switchNegocioTab('catalogo')">CatÃ¡logo/Inventario</button>
+                    <button class="tab-btn" id="tab-recurrentes" onclick="switchNegocioTab('recurrentes')">Gastos Recurrentes</button>
+                    <button class="tab-btn" id="tab-cotizaciones" onclick="switchNegocioTab('cotizaciones')">Cotizaciones</button>
+                    <button class="tab-btn" id="tab-planillas" onclick="switchNegocioTab('planillas')">Planillas / RRHH</button>
+                    <button class="tab-btn" id="tab-bancos" onclick="switchNegocioTab('bancos')">Bancos / ConciliaciÃ³n</button>
+                    <button class="tab-btn" id="tab-contactos" onclick="switchNegocioTab('contactos')">Directorio (CRM)</button>
+                    <button class="tab-btn" id="tab-catalogo-contable" onclick="switchNegocioTab('catalogo-contable')">Plan de Cuentas</button>
+                    <button class="tab-btn" id="tab-libro-diario" onclick="switchNegocioTab('libro-diario')">Libro Diario</button>
+                    <button class="tab-btn" id="tab-reportes" onclick="switchNegocioTab('reportes')">Reportes y PDF</button>
+                    <button class="tab-btn" id="tab-cxc" onclick="switchNegocioTab('cxc')">Cuentas Pendientes</button>
+                    <button class="tab-btn" id="tab-iva" onclick="switchNegocioTab('iva')" style="background: rgba(156, 39, 176, 0.1); border-color: #9c27b0; color: #e1bee7;">Impuestos (D-104)</button>
+                </div>
+
+                <!-- SUB-VISTA: FACTURACION -->
+                <div id="subview-facturacion" style="display: block;">
+                    <div class="desktop-split">
+                        <div class="split-left">
+                            <div class="glass-card" style="margin-bottom: 20px;">
+                                <h2>Registrar OperaciÃ³n (Punto de Venta Simple)</h2>
+                                <form id="form-transaccion-negocio" style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
+                                    <div class="input-group" style="flex: 1; min-width: 150px;">
+                                        <label>OperaciÃ³n</label>
+                                        <select id="tn-type">
+                                            <option value="income">Venta Realizada</option>
+                                            <option value="expense">Gasto/Compra Insumo</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-group" style="flex: 1; min-width: 150px;">
+                                        <label>Monto (â‚¡)</label>
+                                        <input type="number" id="tn-amount" required>
+                                    </div>
+                                    <div class="input-group" style="flex: 2; min-width: 200px;">
+                                        <label>Detalle / Producto</label>
+                                        <input type="text" id="tn-category" list="products-list" oninput="onProductSelect(this.value)" required>
+                                        <datalist id="products-list"></datalist>
+                                    </div>
+                                    <div class="input-group" style="flex: 1; min-width: 120px;">
+                                        <label>Moneda</label>
+                                        <select id="tn-currency" onchange="document.getElementById('tn-exchange-container').style.display = (this.value === 'USD') ? 'block' : 'none'">
+                                            <option value="CRC">Colones (CRC)</option>
+                                            <option value="USD">DÃ³lares (USD)</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-group" id="tn-exchange-container" style="flex: 1; min-width: 120px; display: none;">
+                                        <label>Tipo de Cambio (â‚¡)</label>
+                                        <input type="number" id="tn-exchange-rate" step="0.01" value="510.00">
+                                    </div>
+                                    <div class="input-group" style="flex: 1; min-width: 150px;">
+                                        <label>Cuenta Bancaria</label>
+                                        <select id="tn-account-id">
+                                            <option value="">Efectivo / General</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-group" style="flex: 1; min-width: 150px;">
+                                        <label>Cliente / Proveedor</label>
+                                        <select id="tn-contact-id">
+                                            <option value="">Ninguno (PÃºblico General)</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- FASE 22: Bodega Origen (Opcional) -->
+                                    <div class="input-group" style="flex: 1; min-width: 150px;">
+                                        <label>Bodega (Opcional)</label>
+                                        <select id="tn-warehouse-id">
+                                            <option value="">Sin deducir inventario</option>
+                                        </select>
+                                        <small style="color: #666;">Selecciona para deducir stock de este producto.</small>
+                                    </div>
+                                    
+                                    <!-- Seccion Opcional: Emitir a Hacienda -->
+                                    <div style="width: 100%; border-top: 1px solid var(--card-border); margin-top: 10px; padding-top: 15px;">
+                                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 600; color: var(--primary-color);">
+                                            <input type="checkbox" id="tn-emitir-hacienda" style="width: 20px; height: 20px;" onchange="toggleHaciendaFields()">
+                                            Emitir Factura ElectrÃ³nica a Hacienda
+                                        </label>
+                                    </div>
+                                    
+                                    <div id="hacienda-fields" style="display: none; width: 100%; gap: 15px; flex-wrap: wrap; margin-top: 10px; background: rgba(0,0,0,0.02); padding: 15px; border-radius: 8px;">
+                                        <div class="input-group" style="flex: 1; min-width: 150px;">
+                                            <label>CÃ©dula Cliente (Opcional)</label>
+                                            <input type="text" id="hc-cliente-cedula" placeholder="Ej: 112340567">
+                                        </div>
+                                        <div class="input-group" style="flex: 1; min-width: 150px;">
+                                            <label>Nombre Cliente (Opcional)</label>
+                                            <input type="text" id="hc-cliente-nombre" placeholder="Ej: Juan Perez">
+                                        </div>
+                                        <div class="input-group" style="flex: 1; min-width: 150px;">
+                                            <label>Cobrar IVA</label>
+                                            <select id="hc-iva">
+                                                <option value="0">0% Exento</option>
+                                                <option value="1">1% Canasta BÃ¡sica</option>
+                                                <option value="2">2% Medicamentos/EducaciÃ³n</option>
+                                                <option value="4">4% Boletos/Salud</option>
+                                                <option value="8">8% ConstrucciÃ³n/Turismo</option>
+                                                <option value="13" selected>13% General</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- SecciÃ³n Cuentas Pendientes (CrÃ©dito) -->
+                                    <div style="width: 100%; border-top: 1px solid var(--card-border); margin-top: 10px; padding-top: 15px;">
+                                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 600;">
+                                            <input type="checkbox" id="tn-is-credit" style="width: 20px; height: 20px;" onchange="document.getElementById('tn-due-date-container').style.display = this.checked ? 'block' : 'none'">
+                                            TransacciÃ³n a CrÃ©dito (Pago Pendiente)
+                                        </label>
+                                    </div>
+                                    <div id="tn-due-date-container" style="display: none; width: 100%; margin-top: 5px;">
+                                        <div class="input-group" style="max-width: 200px;">
+                                            <label>Fecha de Vencimiento</label>
+                                            <input type="date" id="tn-due-date">
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary" style="margin-top: 15px; width: 100%;">Registrar y Facturar</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="split-right">
+                            <div class="glass-card" style="text-align: center; border: 2px dashed var(--primary-color);">
+                                <h2 style="color: var(--primary-color);">MÃ³dulo Hacienda CR</h2>
+                                <p style="color: #78909c;">FacturaciÃ³n ElectrÃ³nica 4.4</p>
+                                <p id="hacienda-status-text" style="font-size: 0.9rem; margin-top: 10px;">Estado: <span style="color:var(--danger-color)">Inactivo</span></p>
+                                <button class="btn btn-primary" id="btn-emitir-factura" disabled style="opacity: 0.7; cursor: not-allowed; margin-top: 15px;">Emitir Factura (PrÃ³ximamente)</button>
+                                <p style="font-size: 0.8rem; margin-top: 10px; color: #78909c;">(Configura tus credenciales en la pestaÃ±a "ConfiguraciÃ³n Hacienda" para activar)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUB-VISTA: MOVIMIENTOS -->
+                <div id="subview-movimientos" style="display: none;">
+                    <!-- Panel de AnalÃ­ticas -->
+                    <div class="desktop-split" style="margin-bottom: 20px;">
+                        <div class="glass-card" style="flex: 2;">
+                            <h3 style="margin-bottom: 10px;">Ingresos vs Gastos Mensuales</h3>
+                            <canvas id="chart-tendencia" height="100"></canvas>
+                        </div>
+                        <div class="glass-card" style="flex: 1;">
+                            <h3 style="margin-bottom: 10px;">Desglose de Gastos</h3>
+                            <canvas id="chart-categorias" height="200"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- SUB-VISTA: CATALOGO -->
+                    <div id="subview-catalogo" style="display: none;">
+                        <div class="card" style="margin-bottom: 20px;">
+                            <h3 style="display:flex; justify-content:space-between; align-items:center;">
+                                Inventario de Productos / Servicios
+                                <div>
+                                    <button class="btn btn-outline" onclick="openWarehouseModal()" style="padding: 5px 10px; font-size: 0.8rem; margin-right: 5px;">Bodegas</button>
+                                    <button class="btn btn-outline" onclick="openPurchaseOrdersModal()" style="padding: 5px 10px; font-size: 0.8rem; margin-right: 5px;">Ã“rdenes Compra</button>
+                                    <button class="btn btn-outline" onclick="openImportModal()" style="padding: 5px 10px; font-size: 0.8rem; margin-right: 5px;">Importar CSV</button>
+                                    <button class="btn btn-primary" onclick="openProductModal()" style="padding: 5px 10px; font-size: 0.8rem;">+ Nuevo Ãtem</button>
+                                </div>
+                            </h3>
+                            <table style="width: 100%; text-align: left; border-collapse: collapse; margin-top: 15px;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid #444;">
+                                        <th style="padding: 10px;">Nombre / Detalle</th>
+                                        <th style="padding: 10px;">Precio Unitario</th>
+                                        <th style="padding: 10px;">IVA</th>
+                                        <th style="padding: 10px;">Stock</th>
+                                        <th style="padding: 10px; text-align: right;">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="list-productos">
+                                    <!-- Llenado por JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- SUB-VISTA: GASTOS RECURRENTES -->
+                    <div id="subview-recurrentes" style="display: none;">
+                        <div class="card" style="margin-bottom: 20px;">
+                            <h3 style="display:flex; justify-content:space-between; align-items:center;">
+                                Suscripciones y Gastos Fijos
+                                <button class="btn btn-outline" onclick="openRecurringModal()" style="padding: 5px 10px; font-size: 0.8rem;">+ Nuevo Gasto Fijo</button>
+                            </h3>
+                            <p style="font-size: 0.9rem; color: #ccc;">Estos gastos se inyectarÃ¡n automÃ¡ticamente en tu flujo de caja el dÃ­a del mes especificado.</p>
+                            <table style="width: 100%; text-align: left; border-collapse: collapse; margin-top: 15px;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid #444;">
+                                        <th style="padding: 10px;">CategorÃ­a</th>
+                                        <th style="padding: 10px;">Detalle</th>
+                                        <th style="padding: 10px;">Monto (CRC)</th>
+                                        <th style="padding: 10px;">DÃ­a de Cobro</th>
+                                        <th style="padding: 10px;">Ãšltimo Proceso</th>
+                                        <th style="padding: 10px; text-align: right;">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="list-recurrentes">
+                                    <!-- Llenado por JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- SUB-VISTA: PLANILLAS / RRHH -->
+                    <div id="subview-planillas" style="display: none;">
+                        <div class="card" style="margin-bottom: 20px;">
+                            <h3 style="display:flex; justify-content:space-between; align-items:center;">
+                                GestiÃ³n de Empleados y NÃ³mina
+                                <button class="btn btn-outline" onclick="openEmployeeModal()" style="padding: 5px 10px; font-size: 0.8rem;">+ Nuevo Empleado</button>
+                            </h3>
+                            <table style="width: 100%; text-align: left; border-collapse: collapse; margin-top: 15px;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid #444;">
+                                        <th style="padding: 10px;">Nombre</th>
+                                        <th style="padding: 10px;">CÃ©dula</th>
+                                        <th style="padding: 10px;">Salario Base</th>
+                                        <th style="padding: 10px;">Estado</th>
+                                        <th style="padding: 10px; text-align: right;">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="list-employees">
+                                    <!-- Llenado por JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- SUB-VISTA: REPORTES (ESTADO DE RESULTADOS) -->
+                    <div id="subview-reportes" style="display: none;">
+                        <h2 style="color: #673ab7; margin-bottom: 20px; display:flex; justify-content:space-between; align-items:center;">
+                            Ingresos y Gastos
+                            <div>
+                                <button class="btn btn-outline" onclick="openSinpeModal()" style="font-size:0.8rem; padding: 5px 10px; border-color:#00bcd4; color:#00bcd4;">ðŸ“² Conciliar Sinpe</button>
+                            </div>
+                        </h2>
+                        <div class="filter-bar" style="display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;">
+                                <div class="input-group" style="flex: 1;">
+                                    <label>Mes</label>
+                                    <select id="report-month">
+                                        <option value="all">Todo el AÃ±o</option>
+                                        <option value="01">Enero</option>
+                                        <option value="02">Febrero</option>
+                                        <option value="03">Marzo</option>
+                                        <option value="04">Abril</option>
+                                        <option value="05">Mayo</option>
+                                        <option value="06">Junio</option>
+                                        <option value="07">Julio</option>
+                                        <option value="08">Agosto</option>
+                                        <option value="09">Septiembre</option>
+                                        <option value="10">Octubre</option>
+                                        <option value="11">Noviembre</option>
+                                        <option value="12">Diciembre</option>
+                                    </select>
+                                </div>
+                                <div class="input-group" style="flex: 1;">
+                                    <label>AÃ±o</label>
+                                    <input type="number" id="report-year" value="2026">
+                                </div>
+                                <div class="input-group" style="flex: 1; display:flex; align-items:flex-end;">
+                                    <button class="btn btn-primary" onclick="generateFinancialReport()" style="width: 100%;">Vista Previa</button>
+                                </div>
+                                <div class="input-group" style="flex: 1; display:flex; align-items:flex-end;">
+                                    <button class="btn btn-outline" onclick="window.print()" style="width: 100%;">Imprimir / PDF</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PLANTILLA DEL REPORTE (Visible en Vista Previa y en ImpresiÃ³n) -->
+                        <div id="report-preview" class="card print-only" style="background: #fff; color: #000; border: 1px solid #ddd; padding: 40px; display: none;">
+                            <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 20px; margin-bottom: 30px;">
+                                <h1 style="margin: 0; font-size: 24px;" id="rep-business-name">Nombre Empresa</h1>
+                                <p style="margin: 5px 0 0 0; color: #555;">CÃ©dula JurÃ­dica: <span id="rep-business-id"></span></p>
+                                <h2 style="margin: 15px 0 0 0; font-size: 20px;">ESTADO DE RESULTADOS INTEGRAL</h2>
+                                <p style="margin: 5px 0 0 0; color: #555;" id="rep-period">PerÃ­odo: ...</p>
+                            </div>
+
+                            <div style="font-size: 14px; line-height: 1.8;">
+                                <!-- INGRESOS -->
+                                <div>
+                                    <h3 style="border-bottom: 1px solid #ccc; padding-bottom: 5px;">INGRESOS OPERATIVOS</h3>
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span>Ventas y Servicios Prestados</span>
+                                        <span id="rep-ingresos" style="font-weight: bold;">â‚¡0.00</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; margin-top: 10px;">
+                                        <span>UTILIDAD BRUTA</span>
+                                        <span id="rep-utilidad-bruta">â‚¡0.00</span>
+                                    </div>
+                                </div>
+
+                                <!-- GASTOS -->
+                                <div style="margin-top: 30px;">
+                                    <h3 style="border-bottom: 1px solid #ccc; padding-bottom: 5px;">GASTOS OPERATIVOS</h3>
+                                    <div id="rep-gastos-lista">
+                                        <!-- Se llena con las categorias -->
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; border-top: 1px solid #ccc; margin-top: 10px; padding-top: 10px; font-weight: bold;">
+                                        <span>TOTAL GASTOS OPERATIVOS</span>
+                                        <span id="rep-total-gastos">â‚¡0.00</span>
+                                    </div>
+                                </div>
+
+                                <!-- RESULTADO NETO -->
+                                <div style="margin-top: 40px; border-top: 2px double #000; padding-top: 15px;">
+                                    <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 18px;">
+                                        <span>UTILIDAD (O PÃ‰RDIDA) NETA</span>
+                                        <span id="rep-utilidad-neta">â‚¡0.00</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SUB-VISTA: CXC / CXP (CUENTAS PENDIENTES) -->
+                    <div id="subview-cxc" style="display: none;">
+                        <div class="card">
+                            <h3 style="display:flex; justify-content:space-between; align-items:center;">
+                                Cuentas por Cobrar / Pagar
+                            </h3>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Tipo / Concepto</th>
+                                        <th>CategorÃ­a</th>
+                                        <th>Vencimiento</th>
+                                        <th>Monto</th>
+                                        <th>AcciÃ³n</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="list-cxc">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card no-print">
+                        <h3 style="display:flex; justify-content:space-between; align-items:center;">
+                            Historial de Movimientos
+                            <div style="display:flex; gap: 10px;">
+                                <input type="text" id="filter-text" placeholder="Buscar por descripciÃ³n..." style="padding: 5px; border-radius: 4px; border: 1px solid #ccc; font-size: 0.8rem;">
+                                <select id="filter-month" style="padding: 5px; border-radius: 4px; border: 1px solid #ccc; font-size: 0.8rem;">
+                                    <option value="">Todos los meses</option>
+                                    <option value="0">Enero</option>
+                                    <option value="1">Febrero</option>
+                                    <option value="2">Marzo</option>
+                                    <option value="3">Abril</option>
+                                    <option value="4">Mayo</option>
+                                    <option value="5">Junio</option>
+                                    <option value="6">Julio</option>
+                                    <option value="7">Agosto</option>
+                                    <option value="8">Septiembre</option>
+                                    <option value="9">Octubre</option>
+                                    <option value="10">Noviembre</option>
+                                    <option value="11">Diciembre</option>
+                                </select>
+                                <button class="btn btn-outline" onclick="exportToCSV()" style="padding: 5px 10px; font-size: 0.8rem; background-color: #2196f3; color: white; border: none;">ðŸ“¥ Exportar CSV</button>
+                            </div>
+                        </h3>
+                        <ul id="list-negocio" class="tx-list"></ul>
+                    </div>
+                </div>
+
+                <!-- SUB-VISTA: BANCOS Y CONCILIACION -->
+                <div id="subview-bancos" style="display: none;">
+                    <div class="card">
+                        <h2 style="color: #4caf50; margin-bottom: 20px; display:flex; justify-content:space-between; align-items:center;">
+                            Cuentas Bancarias y Efectivo
+                            <button class="btn btn-outline" onclick="openSinpeModal()" style="font-size:0.8rem; padding: 5px 10px; border-color:#00bcd4; color:#00bcd4;">ðŸ“² Conciliar Sinpe AutomÃ¡tico</button>
+                        </h2>
+                        <div style="display: flex; gap: 20px;">
+                            <div style="flex: 1;">
+                                <h3>Mis Cuentas <button class="btn btn-outline" onclick="openTransferModal()" style="font-size:0.8rem; margin-left:10px;">⇆ Transferir</button></h3>
+                                <ul id="list-bancos" class="tx-list"></ul>
+                            </div>
+                            <div class="glass-card" style="flex: 1; border: 1px solid #4caf50;">
+                                <h3>AÃ±adir Nueva Cuenta</h3>
+                                <form id="form-bank" style="display: flex; flex-direction: column; gap: 15px;">
+                                    <div class="input-group">
+                                        <label>Nombre del Banco / Cuenta</label>
+                                        <input type="text" id="bank-name" placeholder="Ej: BNCR DÃ³lares" required>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Moneda</label>
+                                        <select id="bank-currency">
+                                            <option value="CRC">Colones (CRC)</option>
+                                            <option value="USD">DÃ³lares (USD)</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Balance Inicial</label>
+                                        <input type="number" step="0.01" id="bank-initial-balance" value="0.00" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" style="align-self: flex-start;">Guardar Cuenta</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- FASE 34: PRESUPUESTOS (SOBRES) -->
+                    <div class="card" style="margin-top: 20px;">
+                        <h2 style="color: #ff9800; margin-bottom: 20px;">Presupuestos y Sobres (Control Estricto)</h2>
+                        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                            <div style="flex: 2; min-width: 300px;">
+                                <h3>Sobres Mensuales</h3>
+                                <div id="list-budgets" style="display:flex; flex-direction:column; gap:10px; margin-top:15px;"></div>
+                            </div>
+                            <div class="glass-card" style="flex: 1; min-width: 250px; border: 1px solid #ff9800; align-self: flex-start;">
+                                <h3>Crear Nuevo Sobre</h3>
+                                <form id="form-budget" style="display: flex; flex-direction: column; gap: 15px;">
+                                    <div class="input-group">
+                                        <label>CategorÃ­a (Exacta)</label>
+                                        <input type="text" id="budget-category" placeholder="Ej: Entretenimiento" required>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Presupuesto Mensual</label>
+                                        <input type="number" step="0.01" id="budget-amount" value="0.00" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" style="background-color: #ff9800; border-color: #ff9800;">Guardar Sobre</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUB-VISTA: CONTACTOS (CRM) -->
+                <div id="subview-contactos" style="display: none;">
+                    <div class="card">
+                        <h2 style="color: #2196f3; margin-bottom: 20px;">Directorio de Clientes y Proveedores (CRM)</h2>
+                        <div style="display: flex; gap: 20px;">
+                            <div style="flex: 1;">
+                                <h3>Mi Directorio</h3>
+                                <div style="margin-bottom: 15px;">
+                                    <select id="filter-contact-role" onchange="renderContactosModule()" style="padding: 8px; border-radius: 4px; background:#1e222d; color:#fff; border:1px solid #333;">
+                                        <option value="">Todos</option>
+                                        <option value="client">Solo Clientes</option>
+                                        <option value="provider">Solo Proveedores</option>
+                                    </select>
+                                </div>
+                                <ul id="list-contactos" class="tx-list"></ul>
+                            </div>
+                            <div class="glass-card" style="flex: 1; border: 1px solid #2196f3;">
+                                <h3>AÃ±adir Nuevo Contacto</h3>
+                                <form id="form-contact" style="display: flex; flex-direction: column; gap: 15px;">
+                                    <div class="input-group">
+                                        <label>Nombre / RazÃ³n Social</label>
+                                        <input type="text" id="contact-name" required>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>IdentificaciÃ³n (CÃ©dula)</label>
+                                        <input type="text" id="contact-taxid">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Tipo de RelaciÃ³n</label>
+                                        <select id="contact-role">
+                                            <option value="client">Cliente</option>
+                                            <option value="provider">Proveedor</option>
+                                            <option value="both">Ambos (Cliente y Proveedor)</option>
+                                        </select>
+                                    </div>
+                                    <div style="display: flex; gap: 10px;">
+                                        <div class="input-group" style="flex:1;">
+                                            <label>TelÃ©fono</label>
+                                            <input type="text" id="contact-phone">
+                                        </div>
+                                        <div class="input-group" style="flex:1;">
+                                            <label>Email</label>
+                                            <input type="email" id="contact-email">
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" style="align-self: flex-start;">Guardar Contacto</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUB-VISTA: COTIZACIONES / PROFORMAS -->
+                <div id="subview-cotizaciones" style="display: none;">
+                    <div class="card">
+                        <h2 style="color: #ff9800; margin-bottom: 20px;">Proformas / Cotizaciones</h2>
+                        <div style="display: flex; gap: 20px;">
+                            <div style="flex: 1;">
+                                <h3>Historial de Cotizaciones</h3>
+                                <ul id="list-cotizaciones" class="tx-list"></ul>
+                            </div>
+                            <div class="glass-card" style="flex: 1; border: 1px solid #ff9800;">
+                                <h3>Generar Nueva Proforma</h3>
+                                <form id="form-quote" style="display: flex; flex-direction: column; gap: 15px;">
+                                    <div class="input-group">
+                                        <label>Cliente</label>
+                                        <select id="quote-contact" required></select>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Monto Total Estimado (â‚¡)</label>
+                                        <input type="number" step="0.01" id="quote-total" required>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Detalles / DescripciÃ³n (Productos, Servicios...)</label>
+                                        <textarea id="quote-details" rows="3" required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" style="align-self: flex-start; background-color: #ff9800; border-color: #ff9800;">Crear Proforma</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUB-VISTA: CATALOGO CONTABLE -->
+                <div id="subview-catalogo-contable" style="display: none;">
+                    <div class="card">
+                        <h2 style="color: #673ab7; margin-bottom: 20px; display:flex; justify-content:space-between; align-items:center;">
+                            CatÃ¡logo Contable (Plan de Cuentas)
+                            <button class="btn btn-outline" onclick="openFixedAssetsModal()" style="font-size:0.8rem; padding: 5px 10px;">GestiÃ³n de Activos Fijos</button>
+                        </h2>
+                        <div style="display: flex; gap: 20px;">
+                            <div style="flex: 2;">
+                                <h3>Cuentas Registradas</h3>
+                                <ul id="list-cuentas-contables" class="tx-list" style="max-height: 500px; overflow-y: auto;"></ul>
+                            </div>
+                            <div class="glass-card" style="flex: 1; border: 1px solid #673ab7; align-self: flex-start;">
+                                <h3>AÃ±adir Cuenta Manual</h3>
+                                <form id="form-account-catalog" style="display: flex; flex-direction: column; gap: 15px;">
+                                    <div class="input-group">
+                                        <label>CÃ³digo Contable</label>
+                                        <input type="text" id="account-code" placeholder="Ej: 104" required>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Nombre de Cuenta</label>
+                                        <input type="text" id="account-name" placeholder="Ej: VehÃ­culos" required>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Naturaleza / Tipo</label>
+                                        <select id="account-type">
+                                            <option value="asset">Activo</option>
+                                            <option value="liability">Pasivo</option>
+                                            <option value="equity">Patrimonio</option>
+                                            <option value="revenue">Ingreso</option>
+                                            <option value="expense">Gasto</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" style="align-self: flex-start; background-color:#673ab7; border-color:#673ab7;">Crear Cuenta</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUB-VISTA: LIBRO DIARIO -->
+                <div id="subview-libro-diario" style="display: none;">
+                    <div class="card">
+                        <h2 style="color: #3f51b5; margin-bottom: 20px;">Libro Diario (Asientos Contables)</h2>
+                        <button class="btn btn-primary" onclick="openJournalModal()" style="margin-bottom:15px; background-color:#3f51b5; border-color:#3f51b5;">+ Nuevo Asiento Manual</button>
+                        
+                        <div id="list-journal-entries" style="display: flex; flex-direction: column; gap: 15px;">
+                            <!-- Asientos renderizados aquÃ­ -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUB-VISTA: REPORTES Y ESTADOS FINANCIEROS -->
+                <div id="subview-reportes" style="display: none;">
+                    <div class="card">
+                        <h2 style="color: #607d8b; margin-bottom: 20px;">Reportes y GeneraciÃ³n de PDF</h2>
+                        
+                        <div style="display: flex; gap: 20px;">
+                            <!-- Panel de GeneraciÃ³n de Reportes BÃ¡sicos -->
+                            <div style="flex: 1; border-right: 1px solid #eee; padding-right: 20px;">
+                                <h3>Reporte Mensual de Operaciones</h3>
+                                <p style="font-size: 0.9em; color: #a0aabf; margin-bottom: 15px;">Genera un documento PDF con todas las transacciones, desglose de IVA y balance del mes seleccionado.</p>
+                                
+                                <div class="input-group">
+                                    <label>Mes</label>
+                                    <select id="report-month">
+                                        <option value="0">Enero</option>
+                                        <option value="1">Febrero</option>
+                                        <option value="2">Marzo</option>
+                                        <option value="3">Abril</option>
+                                        <option value="4">Mayo</option>
+                                        <option value="5">Junio</option>
+                                        <option value="6">Julio</option>
+                                        <option value="7">Agosto</option>
+                                        <option value="8">Septiembre</option>
+                                        <option value="9">Octubre</option>
+                                        <option value="10">Noviembre</option>
+                                        <option value="11">Diciembre</option>
+                                    </select>
+                                </div>
+                                <div class="input-group">
+                                    <label>AÃ±o</label>
+                                    <select id="report-year">
+                                        <option value="2024">2024</option>
+                                        <option value="2025">2025</option>
+                                        <option value="2026" selected>2026</option>
+                                        <option value="2027">2027</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-primary" onclick="generateMonthlyPDF()" style="background-color: #607d8b; border-color: #607d8b; width: 100%;">Generar PDF Mensual</button>
+                            </div>
+                            
+                            <!-- Panel de Estados Financieros -->
+                            <div style="flex: 1;">
+                                <h3>Estados Financieros Contables</h3>
+                                <p style="font-size: 0.9em; color: #a0aabf; margin-bottom: 15px;">Consulta el Balance de ComprobaciÃ³n y Estado de Resultados consolidado a la fecha actual segÃºn los asientos contables.</p>
+                                <button class="btn btn-outline" onclick="loadFinancialStatements()" style="width: 100%; border-color: #3f51b5; color: #3f51b5;">Cargar Balance de ComprobaciÃ³n</button>
+                                
+                                <div id="financial-statements-container" style="margin-top: 20px; display: none; max-height: 400px; overflow-y: auto;">
+                                    <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 0.9em;">
+                                        <thead>
+                                            <tr style="border-bottom: 2px solid #ddd;">
+                                                <th style="padding: 5px;">CÃ³digo</th>
+                                                <th style="padding: 5px;">Cuenta</th>
+                                                <th style="padding: 5px; text-align: right;">Debe</th>
+                                                <th style="padding: 5px; text-align: right;">Haber</th>
+                                                <th style="padding: 5px; text-align: right;">Saldo</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="financial-statements-body"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUB-VISTA: IVA (D-104) -->
+                <div id="subview-iva" style="display: none;">
+                    <div class="card">
+                        <h2 style="color: #9c27b0; margin-bottom: 5px;">DeclaraciÃ³n de IVA Simplificada (D-104)</h2>
+                        <p style="color: #a0aabf; margin-bottom: 20px;">Este mÃ³dulo consolida el IVA cobrado en tus ventas (DÃ©bito) y el IVA pagado en tus compras (CrÃ©dito) para calcular tu saldo a pagar a Hacienda.</p>
+                        
+                        <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                            <div class="input-group" style="flex:1;">
+                                <label>Mes a Declarar</label>
+                                <select id="iva-month" onchange="renderIvaModule()">
+                                    <option value="0">Enero</option>
+                                    <option value="1">Febrero</option>
+                                    <option value="2">Marzo</option>
+                                    <option value="3">Abril</option>
+                                    <option value="4">Mayo</option>
+                                    <option value="5">Junio</option>
+                                    <option value="6">Julio</option>
+                                    <option value="7">Agosto</option>
+                                    <option value="8">Septiembre</option>
+                                    <option value="9">Octubre</option>
+                                    <option value="10">Noviembre</option>
+                                    <option value="11">Diciembre</option>
+                                </select>
+                            </div>
+                            <div class="input-group" style="flex:1;">
+                                <label>AÃ±o</label>
+                                <select id="iva-year" onchange="renderIvaModule()">
+                                    <option value="2024">2024</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2026" selected>2026</option>
+                                    <option value="2027">2027</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div id="iva-results">
+                            <!-- Inyectado por renderIvaModule() -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUB-VISTA: CONFIGURACION HACIENDA -->
+                <div id="subview-hacienda" style="display: none;">
+                    <div class="glass-card" style="max-width: 600px; margin: 0 auto;">
+                        <h2 style="color: var(--primary-color);">ConexiÃ³n con el Ministerio de Hacienda</h2>
+                        <p style="margin-bottom: 20px; color: #546e7a;">Configura tus credenciales ATV para permitir que el sistema firme y envÃ­e las facturas electrÃ³nicas de forma automÃ¡tica. Tus datos se guardarÃ¡n de forma estrictamente <strong>encriptada</strong> y local.</p>
+                        
+                        <form id="form-hacienda-config" style="display: flex; flex-direction: column; gap: 15px;">
+                            <div class="input-group">
+                                <label>Usuario ATV (Ej: cpf-01-1234-0567)</label>
+                                <input type="text" id="hc-user" placeholder="Ingresa tu usuario de Hacienda" required>
+                            </div>
+                            <div class="input-group">
+                                <label>ContraseÃ±a ATV</label>
+                                <input type="password" id="hc-pass" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" required>
+                            </div>
+                            <div class="input-group">
+                                <label>Archivo de Llave CriptogrÃ¡fica (.p12) <span style="color: var(--danger-color);">*Requerido para activar</span></label>
+                                <input type="file" id="hc-p12" accept=".p12">
+                                <small style="color: #78909c;">âš ï¸ Debes subir tu archivo .p12 <strong>al menos una vez</strong> para activar el mÃ³dulo de facturaciÃ³n electrÃ³nica. Solo necesitas subirlo nuevamente si cambias de certificado.</small>
+                            </div>
+                            <div class="input-group">
+                                <label>PIN del Certificado CriptogrÃ¡fico</label>
+                                <input type="password" id="hc-pin" placeholder="â€¢â€¢â€¢â€¢" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Guardar y Encriptar Credenciales</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario Crear Negocio -->
+            <div id="form-crear-negocio-container" class="glass-card" style="display: none;">
+                <h2>Crear Nuevo Negocio</h2>
+                <form id="form-crear-negocio">
+                    <div class="input-group">
+                        <label>Nombre del Negocio</label>
+                        <input type="text" id="new-biz-name" required>
+                    </div>
+                    <div class="input-group">
+                        <label>CÃ©dula JurÃ­dica / FÃ­sica (Opcional)</label>
+                        <input type="text" id="new-biz-cedula">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Crear</button>
+                    <button type="button" class="btn btn-outline" onclick="document.getElementById('form-crear-negocio-container').style.display='none'">Cancelar</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+        <!-- Modal EdiciÃ³n TransacciÃ³n -->
+        <div id="modal-edit-tx" class="modal">
+            <div class="modal-content">
+                <h2>Editar Movimiento</h2>
+                <div class="input-group">
+                    <label>CategorÃ­a</label>
+                    <input type="text" id="edit-category" placeholder="CategorÃ­a">
+                </div>
+                <div class="input-group">
+                    <label>Monto</label>
+                    <input type="number" id="edit-amount" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label>Fecha</label>
+                    <input type="date" id="edit-date">
+                </div>
+                <button class="btn btn-primary" id="btn-save-edit" style="width: 100%; margin-top: 15px;">Guardar Cambios</button>
+                <button class="btn btn-outline" onclick="document.getElementById('modal-edit-tx').style.display='none'" style="width: 100%; margin-top: 5px;">Cancelar</button>
+            </div>
+        </div>
+
+        <!-- MODAL PRODUCTO -->
+        <div id="modal-product" class="modal" style="display: none;">
+            <div class="modal-content">
+                <h3 id="modal-product-title">Nuevo Producto/Servicio</h3>
+                <input type="hidden" id="prod-id">
+                
+                <div class="input-group">
+                    <label>Nombre / Detalle</label>
+                    <input type="text" id="prod-name" placeholder="Ej: ConsultorÃ­a">
+                </div>
+                <div class="input-group">
+                    <label>Precio Unitario (CRC)</label>
+                    <input type="number" id="prod-price" placeholder="0.00">
+                </div>
+                <div class="input-group">
+                    <label>Tarifa IVA (%)</label>
+                    <select id="prod-iva">
+                        <option value="13">13%</option>
+                        <option value="8">8%</option>
+                        <option value="4">4%</option>
+                        <option value="2">2%</option>
+                        <option value="1">1%</option>
+                        <option value="0">0%</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Stock / Inventario (Opcional)</label>
+                    <input type="number" id="prod-stock" value="0">
+                </div>
+                <button class="btn btn-primary" onclick="saveProduct()" style="width: 100%; margin-top: 15px;">Guardar</button>
+                <button class="btn btn-outline" onclick="closeProductModal()" style="width: 100%; margin-top: 5px;">Cancelar</button>
+            </div>
+        </div>
+
+        <!-- MODAL RECURRENTE -->
+        <div id="modal-recurring" class="modal" style="display: none;">
+            <div class="modal-content">
+                <h3 id="modal-recurring-title">Nuevo Gasto Fijo</h3>
+                
+                <div class="input-group">
+                    <label>CategorÃ­a (Ej: Servicios PÃºblicos)</label>
+                    <input type="text" id="rec-category">
+                </div>
+                <div class="input-group">
+                    <label>Detalle / DescripciÃ³n</label>
+                    <input type="text" id="rec-description" placeholder="Ej: Pago de Alquiler Local">
+                </div>
+                <div class="input-group">
+                    <label>Monto Fijo (CRC)</label>
+                    <input type="number" id="rec-amount" placeholder="0.00">
+                </div>
+                <div class="input-group">
+                    <label>DÃ­a del Mes de Cobro (1-31)</label>
+                    <input type="number" id="rec-day" min="1" max="31" value="1">
+                </div>
+                <button class="btn btn-primary" onclick="saveRecurring()" style="width: 100%; margin-top: 15px;">Guardar</button>
+                <button class="btn btn-outline" onclick="closeRecurringModal()" style="width: 100%; margin-top: 5px;">Cancelar</button>
+            </div>
+        </div>
+
+        <!-- MODAL ABONOS (PAGOS PARCIALES) -->
+        <div id="modal-payment" class="modal" style="display: none;">
+            <div class="modal-content">
+                <h3 id="modal-payment-title">Registrar Abono</h3>
+                <input type="hidden" id="payment-tx-id">
+                
+                <div style="margin-bottom: 20px;">
+                    <ul id="list-payments" class="tx-list" style="max-height: 150px; overflow-y: auto;"></ul>
+                </div>
+                
+                <div class="input-group">
+                    <label>Monto a Abonar</label>
+                    <input type="number" step="0.01" id="payment-amount">
+                </div>
+                <div class="input-group">
+                    <label>Fecha</label>
+                    <input type="date" id="payment-date">
+                </div>
+                <div class="input-group">
+                    <label>Cuenta Bancaria (Opcional)</label>
+                    <select id="payment-account">
+                        <option value="">Efectivo / General</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="savePayment()" style="width: 100%; margin-top: 15px;">Registrar Abono</button>
+                <button class="btn btn-outline" onclick="closePaymentModal()" style="width: 100%; margin-top: 5px;">Cerrar</button>
+            </div>
+        </div>
+
+        <!-- MODAL LIBRO DIARIO (NUEVO ASIENTO) -->
+        <div id="modal-journal" class="modal" style="display: none;">
+            <div class="modal-content" style="max-width: 600px;">
+                <h3 id="modal-journal-title">Registrar Asiento Contable</h3>
+                
+                <div class="input-group">
+                    <label>Fecha</label>
+                    <input type="date" id="journal-date" required>
+                </div>
+                <div class="input-group">
+                    <label>DescripciÃ³n / Concepto</label>
+                    <input type="text" id="journal-description" placeholder="Ej: Compra de mercaderÃ­a" required>
+                </div>
+                
+                <h4 style="margin-top:20px; margin-bottom:10px;">LÃ­neas del Asiento</h4>
+                <div id="journal-lines-container" style="display:flex; flex-direction:column; gap:10px; margin-bottom:15px;">
+                    <!-- Lineas dinÃ¡micas -->
+                </div>
+                
+                <div style="display: flex; gap:10px; align-items:center; margin-bottom:15px;">
+                    <select id="journal-account-select" style="flex:2;"></select>
+                    <input type="number" id="journal-debit-input" placeholder="DÃ©bito (Debe)" step="0.01" style="flex:1;">
+                    <input type="number" id="journal-credit-input" placeholder="CrÃ©dito (Haber)" step="0.01" style="flex:1;">
+                    <button class="btn btn-outline" type="button" onclick="addJournalLine()" style="padding: 8px 12px;">AÃ±adir LÃ­nea</button>
+                </div>
+                
+                <div style="background:#f1f1f1; padding:10px; border-radius:5px; text-align:right; font-weight:bold; margin-bottom:15px;">
+                    Total DÃ©bito: <span id="journal-total-debit" style="color:#f44336;">0.00</span> | 
+                    Total CrÃ©dito: <span id="journal-total-credit" style="color:#4caf50;">0.00</span>
+                </div>
+
+                <button class="btn btn-primary" onclick="saveJournalEntry()" style="width: 100%; background-color:#3f51b5; border-color:#3f51b5;">Guardar Asiento</button>
+                <button class="btn btn-outline" onclick="closeJournalModal()" style="width: 100%; margin-top: 5px;">Cancelar</button>
+            </div>
+        </div>
+
+        <!-- MODAL SUB-USUARIOS (FASE 21) -->
+        <div id="modal-subusers" class="modal" style="display: none;">
+            <div class="modal-content" style="max-width: 500px;">
+                <h3 style="color: #ff9800; margin-top:0;">GestiÃ³n de Sub-cuentas</h3>
+                <p style="font-size:0.9em; color:#a0aabf; margin-bottom:15px;">Crea credenciales temporales o permanentes para que tus empleados (Cajeros, Contadores) ingresen al sistema.</p>
+                
+                <ul id="list-subusers" class="tx-list" style="margin-bottom:20px; max-height:200px; overflow-y:auto;"></ul>
+                
+                <h4 style="margin-bottom:10px;">Crear Nueva Sub-cuenta</h4>
+                <div class="input-group">
+                    <label>Nombre de Usuario (Login)</label>
+                    <input type="text" id="subuser-username" placeholder="Ej: cajero_central">
+                </div>
+                <div class="input-group">
+                    <label>ContraseÃ±a Temporal</label>
+                    <input type="text" id="subuser-password" placeholder="Ej: temporal123">
+                </div>
+                <div class="input-group">
+                    <label>Rol / Permisos</label>
+                    <select id="subuser-role">
+                        <option value="cajero">Cajero (Solo FacturaciÃ³n)</option>
+                        <option value="contador">Contador (Acceso Total a Reportes)</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="createSubuser()" style="width: 100%; background-color:#ff9800; border-color:#ff9800; margin-top: 15px;">Crear Sub-cuenta</button>
+                <button class="btn btn-outline" onclick="closeSubusersModal()" style="width: 100%; margin-top: 5px;">Cerrar</button>
+            </div>
+        </div>
+
+        <!-- MODAL BODEGAS (FASE 22) -->
+        <div id="modal-warehouse" class="modal" style="display: none;">
+            <div class="modal-content" style="max-width: 500px;">
+                <h3 style="color: #e91e63; margin-top:0;">GestiÃ³n de Bodegas</h3>
+                <p style="font-size:0.9em; color:#a0aabf; margin-bottom:15px;">Crea nuevas bodegas o sucursales para el inventario.</p>
+                
+                <ul id="list-warehouses" class="tx-list" style="margin-bottom:20px; max-height:200px; overflow-y:auto;"></ul>
+                
+                <h4 style="margin-bottom:10px;">Crear Bodega</h4>
+                <div class="input-group">
+                    <label>Nombre de Bodega</label>
+                    <input type="text" id="warehouse-name" placeholder="Ej: Bodega Central">
+                </div>
+                <button class="btn btn-primary" onclick="createWarehouse()" style="width: 100%; background-color:#e91e63; border-color:#e91e63; margin-top: 15px;">Crear Bodega</button>
+                <button class="btn btn-outline" onclick="closeWarehouseModal()" style="width: 100%; margin-top: 5px;">Cerrar</button>
+            </div>
+        </div>
+
+        <!-- MODAL ORDENES DE COMPRA (FASE 23) -->
+        <div id="modal-purchase-orders" class="modal" style="display: none;">
+            <div class="modal-content" style="max-width: 700px;">
+                <h3 style="color: #e91e63; margin-top:0;">Ã“rdenes de Compra</h3>
+                <p style="font-size:0.9em; color:#a0aabf; margin-bottom:15px;">Gestiona pedidos a proveedores y recÃ­belos en bodega.</p>
+                
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1;">
+                        <h4>Nueva Orden</h4>
+                        <div class="input-group">
+                            <label>Proveedor</label>
+                            <select id="po-contact-id"></select>
+                        </div>
+                        <div class="input-group">
+                            <label>Fecha</label>
+                            <input type="date" id="po-date">
+                        </div>
+                        <div class="input-group">
+                            <label>Producto</label>
+                            <input type="text" id="po-product" list="products-list" placeholder="Seleccione producto">
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <div class="input-group" style="flex:1;">
+                                <label>Cantidad</label>
+                                <input type="number" id="po-qty" value="1">
+                            </div>
+                            <div class="input-group" style="flex:1;">
+                                <label>Precio Costo</label>
+                                <input type="number" id="po-price">
+                            </div>
+                            <button class="btn btn-outline" style="align-self: flex-end; margin-bottom:15px;" onclick="addPurchaseOrderLine()">AÃ±adir</button>
+                        </div>
+                        <ul id="po-lines" class="tx-list" style="max-height: 150px; overflow-y:auto; margin-bottom:10px;"></ul>
+                        <div class="input-group">
+                            <label>Total Estimado</label>
+                            <input type="number" id="po-total" readonly>
+                        </div>
+                        <button class="btn btn-primary" onclick="createPurchaseOrder()" style="width: 100%; background-color:#e91e63; border-color:#e91e63;">Generar Orden</button>
+                    </div>
+                    <div style="flex: 1; border-left: 1px solid #333; padding-left: 20px;">
+                        <h4>Ã“rdenes Pendientes</h4>
+                        <ul id="list-purchase-orders" class="tx-list" style="max-height: 400px; overflow-y:auto;"></ul>
+                    </div>
+                </div>
+                <button class="btn btn-outline" onclick="closePurchaseOrdersModal()" style="width: 100%; margin-top: 15px;">Cerrar</button>
+            </div>
+        </div>
+
+        <!-- MODAL IMPORTAR CSV (FASE 24) -->
+        <div id="modal-import-csv" class="modal" style="display: none;">
+            <div class="modal-content" style="max-width: 500px;">
+                <h3 style="color: #e91e63; margin-top:0;">Importar Productos (CSV)</h3>
+                <p style="font-size:0.9em; color:#a0aabf; margin-bottom:15px;">El archivo CSV debe tener las columnas: <code>name, price, iva_rate, stock</code>.</p>
+                <div class="input-group">
+                    <label>Archivo CSV</label>
+                    <input type="file" id="csv-file" accept=".csv">
+                </div>
+                <button class="btn btn-primary" onclick="uploadCSV()" style="width: 100%; background-color:#e91e63; border-color:#e91e63; margin-top: 15px;">Importar</button>
+                <button class="btn btn-outline" onclick="closeImportModal()" style="width: 100%; margin-top: 5px;">Cerrar</button>
+            </div>
+        </div>
+
+        <!-- MODAL ACTIVOS FIJOS (FASE 25) -->
+        <div id="modal-fixed-assets" class="modal" style="display: none;">
+            <div class="modal-content" style="max-width: 600px;">
+                <h3 style="color: #e91e63; margin-top:0;">GestiÃ³n de Activos Fijos</h3>
+                <p style="font-size:0.9em; color:#a0aabf; margin-bottom:15px;">Registra propiedades, vehÃ­culos, o equipo con su valor y depreciaciÃ³n anual.</p>
+                
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1;">
+                        <div class="input-group">
+                            <label>Nombre del Activo</label>
+                            <input type="text" id="fa-name" placeholder="Ej: VehÃ­culo Reparto">
+                        </div>
+                        <div class="input-group">
+                            <label>Valor Inicial (Costo)</label>
+                            <input type="number" id="fa-value">
+                        </div>
+                        <div class="input-group">
+                            <label>Fecha de Compra</label>
+                            <input type="date" id="fa-date">
+                        </div>
+                        <div class="input-group">
+                            <label>Vida Ãštil (AÃ±os)</label>
+                            <input type="number" id="fa-lifespan" value="5">
+                        </div>
+                        <button class="btn btn-primary" onclick="createFixedAsset()" style="width: 100%; background-color:#e91e63; border-color:#e91e63;">Registrar Activo</button>
+                    </div>
+                    <div style="flex: 1; border-left: 1px solid #333; padding-left: 20px;">
+                        <h4>Mis Activos</h4>
+                        <ul id="list-fixed-assets" class="tx-list" style="max-height: 250px; overflow-y:auto;"></ul>
+                    </div>
+                </div>
+                <button class="btn btn-outline" onclick="closeFixedAssetsModal()" style="width: 100%; margin-top: 15px;">Cerrar</button>
+            </div>
+        </div>
+
+        <!-- MODAL SINPE (FASE 26) -->
+        <div id="modal-sinpe" class="modal" style="display: none;">
+            <div class="modal-content" style="max-width: 500px;">
+                <h3 style="color: #00bcd4; margin-top:0;">ConciliaciÃ³n Sinpe MÃ³vil</h3>
+                <p style="font-size:0.9em; color:#a0aabf; margin-bottom:15px;">Pega el texto del mensaje SMS que te envÃ­a el banco para registrar el ingreso automÃ¡ticamente.</p>
+                <div class="input-group">
+                    <label>Mensaje SMS del Banco</label>
+                    <textarea id="sinpe-sms" rows="5" placeholder="Ej: Sinpe Movil: ... le ha enviado ... por un monto de CRC 5,000.00 ... Referencia: 123456"></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="parseSinpe()" style="width: 100%; background-color:#00bcd4; border-color:#00bcd4; margin-top: 15px;">Analizar y Registrar</button>
+                <button class="btn btn-outline" onclick="closeSinpeModal()" style="width: 100%; margin-top: 5px;">Cerrar</button>
+            </div>
+        </div>
+
+                <!-- MODAL TRANSFERENCIA BANCARIA (FASE 27) -->
+        <div id="modal-transfer" class="modal" style="display: none;">
+            <div class="modal-content" style="max-width: 500px;">
+                <h3 style="color: #4caf50; margin-top:0;">Transferencia entre Cuentas</h3>
+                <div class="input-group">
+                    <label>Cuenta Origen</label>
+                    <select id="transfer-source"></select>
+                </div>
+                <div class="input-group">
+                    <label>Cuenta Destino</label>
+                    <select id="transfer-target"></select>
+                </div>
+                <div class="input-group">
+                    <label>Monto</label>
+                    <input type="number" id="transfer-amount" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label>Descripción</label>
+                    <input type="text" id="transfer-desc" placeholder="Ej: Traspaso de fondos">
+                </div>
+                <button class="btn btn-primary" onclick="executeBankTransfer()" style="width: 100%; background-color:#4caf50; border-color:#4caf50; margin-top: 15px;">Transferir</button>
+                <button class="btn btn-outline" onclick="closeTransferModal()" style="width: 100%; margin-top: 5px;">Cerrar</button>
+            </div>
+        </div>
+        <!-- MODAL EMPLEADO -->
+        <div id="modal-employee" class="modal" style="display: none;">
+            <div class="modal-content">
+                <h3 id="modal-emp-title">Registrar Empleado</h3>
+                
+                <div class="input-group">
+                    <label>Nombre Completo</label>
+                    <input type="text" id="emp-name" placeholder="Ej: Juan PÃ©rez">
+                </div>
+                <div class="input-group">
+                    <label>CÃ©dula o IdentificaciÃ³n</label>
+                    <input type="text" id="emp-id" placeholder="Ej: 1-1111-1111">
+                </div>
+                <div class="input-group">
+                    <label>Salario Base (Mensual - CRC)</label>
+                    <input type="number" id="emp-salary" placeholder="0.00">
+                </div>
+                <button class="btn btn-primary" onclick="saveEmployee()" style="width: 100%; margin-top: 15px;">Guardar</button>
+                <button class="btn btn-outline" onclick="closeEmployeeModal()" style="width: 100%; margin-top: 5px;">Cancelar</button>
+            </div>
+        </div>
+
+    <!-- LibrerÃ­as Externas -->
+    <script src="chart.min.js"></script>
+
+    <!-- MÃ³dulos del C.A.L.M -->
+    <script src="modules/core.js"></script>
+    <script src="modules/transactions.js"></script>
+    <script src="modules/inventory.js"></script>
+    <script src="modules/payroll.js"></script>
+    <script src="modules/accounting.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(reg => {
+                    console.log('Service Worker registrado', reg);
+                }).catch(err => console.log('Error registrando Service Worker', err));
+            });
+        }
+    </script>
+</body>
+</html>
+
+
+
+

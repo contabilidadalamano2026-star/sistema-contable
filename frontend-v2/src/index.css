@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: theme('colors.background');
+  color: #e0e6ed;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}

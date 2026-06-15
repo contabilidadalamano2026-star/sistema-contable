@@ -1,0 +1,21 @@
+{
+  "name": "Sistema Contable CR",
+  "short_name": "Contabilidad",
+  "description": "Sistema Contable Integral para Negocios y Finanzas Personales en Costa Rica",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#e0f2f1",
+  "theme_color": "#00796b",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzAwNzk2YiI+PHBhdGggZD0iTTEyIDJMMiAxMmgydjhoOHYtNmg0djZoOHYtOGgyTDEyIDJ6bS0yIDE2SDh2LThoNHY4em02IDBoLTR2LThoNHY4eiIvPjwvc3ZnPg==",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzAwNzk2YiI+PHBhdGggZD0iTTEyIDJMMiAxMmgydjhoOHYtNmg0djZoOHYtOGgyTDEyIDJ6bS0yIDE2SDh2LThoNHY4em02IDBoLTR2LThoNHY4eiIvPjwvc3ZnPg==",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

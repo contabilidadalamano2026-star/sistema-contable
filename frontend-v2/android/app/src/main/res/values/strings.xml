@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">calm</string>
+    <string name="title_activity_main">calm</string>
+    <string name="package_name">com.contabilidad.calm</string>
+    <string name="custom_url_scheme">com.contabilidad.calm</string>
+</resources>

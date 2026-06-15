@@ -1,0 +1,23 @@
+{
+  "packageId": "com.sistemacontable.app",
+  "host": "manual-spoken-undone.ngrok-free.dev",
+  "name": "Sistema Contable CR",
+  "launcherName": "Contabilidad",
+  "themeColor": "#00796b",
+  "navigationColor": "#000000",
+  "navigationColorDark": "#000000",
+  "navigationDividerColor": "#000000",
+  "navigationDividerColorDark": "#000000",
+  "backgroundColor": "#e0f2f1",
+  "enableNotifications": true,
+  "startUrl": "/",
+  "iconUrl": "https://manual-spoken-undone.ngrok-free.dev/icon.png",
+  "maskableIconUrl": "https://manual-spoken-undone.ngrok-free.dev/icon.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "android.keystore",
+    "alias": "android"
+  },
+  "generatorApp": "bubblewrap-cli",
+  "fallbackType": "customtabs"
+}

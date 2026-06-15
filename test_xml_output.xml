@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<FacturaElectronica xmlns="https://cdn.comprobanteselectronicos.go.cr/xml-schemas/v4.3/facturaElectronica" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Clave>5061406202600000012345600100001010000644730181995797</Clave>
+  <CodigoActividad>471100</CodigoActividad>
+  <NumeroConsecutivo>00100001010000644730</NumeroConsecutivo>
+  <FechaEmision>2026-06-14T23:00:51-06:00</FechaEmision>
+  <Emisor>
+    <Nombre>QA Biz</Nombre>
+    <Identificacion>
+      <Tipo>01</Tipo>
+      <Numero>123456</Numero>
+    </Identificacion>
+    <Ubicacion>
+      <Provincia>1</Provincia>
+      <Canton>01</Canton>
+      <Distrito>01</Distrito>
+      <Barrio>01</Barrio>
+      <OtrasSenas>Oficina Central</OtrasSenas>
+    </Ubicacion>
+    <CorreoElectronico>qa_user@sistema.local</CorreoElectronico>
+  </Emisor>
+  <Receptor>
+    <Nombre>Test Cliente</Nombre>
+    <Identificacion>
+      <Tipo>01</Tipo>
+      <Numero>987654321</Numero>
+    </Identificacion>
+    <CorreoElectronico>cliente@correo.local</CorreoElectronico>
+  </Receptor>
+  <CondicionVenta>01</CondicionVenta>
+  <MedioPago>01</MedioPago>
+  <DetalleServicio>
+    <LineaDetalle>
+      <NumeroLinea>1</NumeroLinea>
+      <Codigo>8999901000000</Codigo>
+      <Cantidad>1.000</Cantidad>
+      <UnidadMedida>Unid</UnidadMedida>
+      <Detalle>Test Venta</Detalle>
+      <PrecioUnitario>5000.00000</PrecioUnitario>
+      <MontoTotal>5000.00000</MontoTotal>
+      <SubTotal>5000.00000</SubTotal>
+      <Impuesto>
+        <Codigo>01</Codigo>
+        <CodigoTarifa>08</CodigoTarifa>
+        <Tarifa>13.00</Tarifa>
+        <Monto>650.00000</Monto>
+      </Impuesto>
+      <MontoTotalLinea>5650.00000</MontoTotalLinea>
+    </LineaDetalle>
+  </DetalleServicio>
+  <ResumenFactura>
+    <CodigoTipoMoneda>
+      <CodigoMoneda>CRC</CodigoMoneda>
+      <TipoCambio>1.00000</TipoCambio>
+    </CodigoTipoMoneda>
+    <TotalServiciosGravados>0.00000</TotalServiciosGravados>
+    <TotalServiciosExentos>0.00000</TotalServiciosExentos>
+    <TotalMercanciasGravadas>5000.00000</TotalMercanciasGravadas>
+    <TotalMercanciasExentas>0.00000</TotalMercanciasExentas>
+    <TotalGravado>5000.00000</TotalGravado>
+    <TotalExento>0.00000</TotalExento>
+    <TotalVenta>5000.00000</TotalVenta>
+    <TotalDescuentos>0.00000</TotalDescuentos>
+    <TotalVentaNeta>5000.00000</TotalVentaNeta>
+    <TotalImpuesto>650.00000</TotalImpuesto>
+    <TotalComprobante>5650.00000</TotalComprobante>
+  </ResumenFactura>
+</FacturaElectronica>
