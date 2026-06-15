@@ -19,6 +19,18 @@ function Billing({ businessId }) {
   };
 
   const handleEmitInvoice = async () => {
+    // Alerta de seguridad antes de enviar datos fuera del app
+    const confirmSend = window.confirm(
+      "⚠️ ADVERTENCIA DE SEGURIDAD ⚠️\n\n" +
+      "Estás a punto de enviar datos confidenciales (Facturación) a los servidores del Ministerio de Hacienda (entidad externa).\n\n" +
+      "¿Estás seguro de que deseas continuar con el envío?"
+    );
+
+    if (!confirmSend) {
+      setMessage('Envío cancelado por el usuario.');
+      return;
+    }
+
     setLoading(true);
     setMessage('');
     try {

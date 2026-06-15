@@ -6,6 +6,7 @@ import Inventory from './pages/Inventory';
 import Payroll from './pages/Payroll';
 import CRM from './pages/CRM';
 import Billing from './pages/Billing';
+import Reconciliation from './pages/Reconciliation';
 import { API_URL } from './config';
 
 const Login = ({ setToken }) => {
@@ -59,6 +60,7 @@ const Login = ({ setToken }) => {
 
 const Dashboard = () => {
   const [data, setData] = useState({ revenue: 0, expenses: 0, net_income: 0 });
+  const [taxData, setTaxData] = useState({ total_iva_pagar: 0 });
 
   useEffect(() => {
     const fetchReports = async () => {
@@ -71,6 +73,13 @@ const Dashboard = () => {
           if(res.ok) {
             setData(await res.json());
           }
+
+          const taxRes = await fetch(`${API_URL}/businesses/${bId}/reports/tax-d104`, {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+          });
+          if(taxRes.ok) {
+            setTaxData(await taxRes.json());
+          }
         } catch(e) {
           console.error(e);
         }
@@ -82,7 +91,7 @@ const Dashboard = () => {
   return (
     <div className="text-white">
       <h1 className="text-3xl font-bold mb-4 text-gray-800 dark:text-white">Dashboard Financiero</h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-t-4 border-green-500">
           <h3 className="text-gray-500 dark:text-gray-400 text-sm uppercase font-semibold">Ingresos Totales</h3>
           <p className="text-3xl font-bold mt-2 text-gray-800 dark:text-white">₡{data.revenue.toLocaleString('es-CR')}</p>
@@ -96,6 +105,10 @@ const Dashboard = () => {
           <p className={`text-3xl font-bold mt-2 ${data.net_income >= 0 ? 'text-green-500' : 'text-red-500'}`}>
             ₡{data.net_income.toLocaleString('es-CR')}
           </p>
+        </div>
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-t-4 border-purple-500">
+          <h3 className="text-gray-500 dark:text-gray-400 text-sm uppercase font-semibold">IVA a Pagar (D-104)</h3>
+          <p className="text-3xl font-bold mt-2 text-purple-600 dark:text-purple-400">₡{taxData.total_iva_pagar.toLocaleString('es-CR')}</p>
         </div>
       </div>
     </div>
@@ -116,6 +129,7 @@ function App() {
         <Route path="/payroll" element={token ? <Layout setToken={setToken}><Payroll /></Layout> : <Navigate to="/login" />} />
         <Route path="/crm" element={token ? <Layout setToken={setToken}><CRM /></Layout> : <Navigate to="/login" />} />
         <Route path="/billing" element={token ? <Layout setToken={setToken}><Billing businessId={localStorage.getItem('businessId')} /></Layout> : <Navigate to="/login" />} />
+        <Route path="/reconciliation" element={token ? <Layout setToken={setToken}><Reconciliation businessId={localStorage.getItem('businessId')} /></Layout> : <Navigate to="/login" />} />
       </Routes>
     </Router>
   );
