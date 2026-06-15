@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from db.database import engine, Base
-from api import auth, businesses, transactions, products, employees, contacts, bank_accounts, subusers, opportunities
+from api import auth, businesses, transactions, products, employees, contacts, bank_accounts, subusers, opportunities, invoices, reports
 
 # Create tables
 Base.metadata.create_all(bind=engine)
@@ -25,6 +25,8 @@ app.include_router(contacts.router)
 app.include_router(bank_accounts.router)
 app.include_router(subusers.router)
 app.include_router(opportunities.router)
+app.include_router(invoices.router)
+app.include_router(reports.router)
 
 @app.get("/")
 def root():

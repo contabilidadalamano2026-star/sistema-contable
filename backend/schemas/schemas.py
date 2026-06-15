@@ -72,3 +72,18 @@ class OpportunityResponse(OpportunityBase):
     created_at: datetime
     class Config:
         from_attributes = True
+
+class InvoiceItem(BaseModel):
+    name: str
+    price: float
+    qty: int = 1
+    iva_rate: float = 13.0
+    is_service: bool = False
+    cabys: str = "8999901000000"
+
+class InvoiceCreate(BaseModel):
+    client_name: str
+    client_id: str
+    items: List[InvoiceItem]
+    currency: str = "CRC"
+

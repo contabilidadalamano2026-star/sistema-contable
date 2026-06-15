@@ -8,6 +8,10 @@ from schemas import schemas
 from api.businesses import get_current_user
 from api.dependencies import get_business_with_roles
 
+from services.hacienda import HaciendaXMLBuilder
+from services.hacienda_signer import sign_invoice_xml
+import uuid
+
 router = APIRouter(prefix="/api/businesses/{business_id}/transactions", tags=["transactions"])
 
 @router.get("", response_model=list[schemas.TransactionResponse])

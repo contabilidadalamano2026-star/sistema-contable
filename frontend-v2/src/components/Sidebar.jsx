@@ -32,6 +32,9 @@ const Sidebar = ({ setToken }) => {
         <Link to="/crm" className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 text-white">
           Contactos (CRM)
         </Link>
+        <Link to="/billing" className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 text-white">
+          Facturación
+        </Link>
       </nav>
       <div className="p-4">
         <button onClick={handleLogout} className="w-full bg-danger hover:bg-red-700 text-white p-2 rounded">
